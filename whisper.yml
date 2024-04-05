@@ -1,0 +1,58 @@
+name: whisper
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip
+  - ffmpeg=6.1.1
+  - zlib
+  - xz
+  - x265
+  - x264
+  - wheel
+  - tk
+  - tbb
+  - svt-av1
+  - sqlite
+  - snappy
+  - setuptools
+  - readline
+  - pugixml
+  - pixman
+  - pip:
+      - altgraph==0.17.4
+      - certifi==2024.2.2
+      - charset-normalizer==3.3.2
+      - filelock==3.13.1
+      - fsspec==2024.2.0
+      - idna==3.6
+      - jinja2==3.1.3
+      - llvmlite==0.42.0
+      - macholib==1.16.3
+      - markupsafe==2.1.5
+      - more-itertools==10.2.0
+      - mpmath==1.3.0
+      - networkx==3.2.1
+      - numba==0.59.0
+      - numpy==1.26.4
+      - openai-whisper==20231117
+      - packaging==24.0
+      - pyinstaller==6.5.0
+      - pyinstaller-hooks-contrib==2024.3
+      - pyqt5==5.15.10
+      - pyqt5-qt5==5.15.12
+      - pyqt5-sip==12.13.0
+      - python-magic==0.4.27
+      - python-vlc==3.0.20123
+      - regex==2023.12.25
+      - requests==2.31.0
+      - sympy==1.12
+      - tiktoken==0.6.0
+      - torch==2.2.1
+      - tqdm==4.66.2
+      - typing-extensions==4.10.0
+      - urllib3==2.2.1
+
+prefix: /opt/anaconda3/envs/my_conda_environment
