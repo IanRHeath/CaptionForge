@@ -12,7 +12,7 @@ The CaptionForge is a desktop application built with PyQt5, designed to allow us
 - Search functionality within subtitles
 - Volume control and playback information display
 
-## Installation 
+## 💻 Installation 
 
 ### Prerequisites
 - Python 3.6 or higher
@@ -20,7 +20,7 @@ The CaptionForge is a desktop application built with PyQt5, designed to allow us
 - ffmpeg (for video and audio processing)
 - whisper (for transcription)
 
-### Steps
+### :accessibility: Steps
 
 1. Ensure Python and pip are installed on your system.
 2. Install PyQt5 using pip: 
@@ -29,7 +29,7 @@ The CaptionForge is a desktop application built with PyQt5, designed to allow us
 - ffmpeg: [FFmpeg Installation guide](https://ffmpeg.org/download.html)
 - whisper: Instructions can be found in its GitHub repository or documentation.
 
-### Using a Conda Environment
+### :snake: Using a Conda Environment
 
 To simplify the setup process, I recommend using a Conda environment. This approach ensures that all dependencies are installed and contained, avoiding conflicts with other packages on your system. 
 
@@ -46,11 +46,11 @@ To simplify the setup process, I recommend using a Conda environment. This appro
 - Once the environment is successfully created, activate it with:
     `conda activate whisper`
 - Ensure that you activate this environment each time you work with the application to use the correct dependencies.
-### Running the Application
+### :running: Running the Application
 With the environment activated, navigate to the application's directory in your terminal or command prompt and run: 
   `python transcribe.py`
 
-### Usage 
+### :computer_mouse: Usage 
 
 - **Open a Video**: Use the "Open Video" option in the combo box to select and play a video file. Upon selection, the video will play in the integrated video player.
 - **Generate Subtitles**: Select "Transcribe File" to automatically generate subtitles for the current video. The program processes the video and audio content to create a subtitles file. During this process, a subdirectory named '**processedFiles**' is created in the same directory as your source video file. All processed files, including the generated '**.mp4**' and corresponding '**.srt**' subtitle file, are saved in this subdirectory.
@@ -59,7 +59,7 @@ With the environment activated, navigate to the application's directory in your 
 
 - **Batch Transcription**: For handling multiple files at once, choose "Batch Transcribe Files" to select a directory. The program will transcribe all suitable video and audio files within the selected directory, creating individual '**processedFiles**' subdirectories for each one. This feature streamlines the process of generating subtitles for numerous files, saving time and effort.
 
-### Note
+### :pencil: Note
 When working with subtitles in the '**processedFiles**' subdirectory, it's essential to maintain the pairing between the '**.mp4**' video files and their corresponding '**.srt**' subtitle files. This ensures that any edits or exports you perform use the correct subtitle file, maintaining accuracy in timing and content synchronization.
 
 By following these usage guidelines, users can effectively generate, edit, and export subtitles, ensuring high-quality results with correct synchronization between the subtitles and video content.
