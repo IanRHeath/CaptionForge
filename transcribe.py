@@ -69,15 +69,15 @@ class VideoPlayer(QWidget):
         self.fastForwardButton.setIcon(self.style().standardIcon(QStyle.SP_MediaSkipForward))
         self.fastForwardButton.setEnabled(False)
         self.fastForwardButton.clicked.connect(self.fast_forward_video)
-        self.fastForwardButton.setFixedSize(64, 64) 
+        self.fastForwardButton.setFixedSize(64, 64)
 
         #Toggle Edit Mode button
         self.toggleEditModeButton = QPushButton('Toggle Edit Mode', self)
         self.toggleEditModeButton.setCheckable(True)  # Makes the button toggleable
         self.toggleEditModeButton.clicked.connect(self.toggleEditMode)
         self.editMode = False
-        self.currentlyEditingIndex = None 
-        self.userIsEditing = False 
+        self.currentlyEditingIndex = None
+        self.userIsEditing = False
 
         #Layout setup
         controlButtonLayout = QHBoxLayout()
@@ -88,11 +88,11 @@ class VideoPlayer(QWidget):
         mainButtonLayout = QVBoxLayout()
         mainButtonLayout.addLayout(controlButtonLayout)
 
-        startOverButtonWrapper = QWidget() 
+        startOverButtonWrapper = QWidget()
         startOverButtonLayout = QHBoxLayout()  
         startOverButtonLayout.addWidget(self.startOverButton, 0, Qt.AlignCenter)  
         startOverButtonWrapper.setLayout(startOverButtonLayout)
-        
+       
         mainButtonLayout.addWidget(startOverButtonWrapper, 0, Qt.AlignCenter)
 
         self.exportChangesButton = QPushButton('Export Changes')
@@ -110,8 +110,8 @@ class VideoPlayer(QWidget):
         self.textBox = QTextEdit()
         self.textBox.setReadOnly(True)
         self.textBox.setPlaceholderText("Playback Information...")
-        self.textBox.setMaximumHeight(100) 
-        self.textBox.textChanged.connect(self.onTextBoxEdit) 
+        self.textBox.setMaximumHeight(100)
+        self.textBox.textChanged.connect(self.onTextBoxEdit)
 
         #Current time label
         self.currentTimeLabel = QLabel()
@@ -164,7 +164,7 @@ class VideoPlayer(QWidget):
         # Convert milliseconds to hours, minutes, seconds, and milliseconds
         hours = int(milliseconds // 3600000)  
         minutes = int((milliseconds % 3600000) // 60000)  
-        seconds = int((milliseconds % 60000) // 1000) 
+        seconds = int((milliseconds % 60000) // 1000)
         milliseconds = int(milliseconds % 1000)
         # Format the time into a string format HH:MM:SS,mmm
         formatted_time = f"{hours:02}:{minutes:02}:{seconds:02},{milliseconds:03}"
@@ -197,7 +197,7 @@ class VideoPlayer(QWidget):
             return reply == QMessageBox.Yes
         # Return True if the file does not exist
         return True
-    
+   
     def ensure_processed_files_dir_exists(self, file_path):
         # Extract the directory path from the file path
         file_dir = os.path.dirname(file_path)
@@ -241,13 +241,13 @@ class VideoPlayer(QWidget):
     def convert_and_transcribe(self, input_file):
         self.update_progress(25)  # Update the progress to 25% to indicate the start of processing.
         QApplication.processEvents()  
-        
+       
         # Initialize file paths for potential output files.
         mp3file = input_file.split(".")[0] + ".mp3"
         mp4file = input_file.split(".")[0] + ".mp4"
         filetype = input_file.split(".")[1]
         input_dir = os.path.dirname(input_file)
-        
+       
         try:
             if filetype in ("mp3", "wav"):
                 # For audio files: convert to mp4 format and transcribe.
@@ -268,9 +268,10 @@ class VideoPlayer(QWidget):
 
 
             elif filetype in ("mp4", "mov"):
+                output_directory = os.path.split(input_file)[0] + "/output"
                 # For video files: extract audio, transcribe, and apply subtitles.
                 subprocess.run(["ffmpeg", "-i", input_file, "-vn", "-codec:a", "libmp3lame", "-qscale:a", "4","-preset","ultrafast", mp3file])
-                subprocess.run(["whisper", "--model en", mp3file])
+                subprocess.run(["whisper", "--model en", mp3file, "--output_dir", output_directory])
 
                 self.update_progress(50)  # Update progress midway through the operation.
                 QApplication.processEvents()  
@@ -281,6 +282,7 @@ class VideoPlayer(QWidget):
                 temp2 = output_directory+ "/" + tempFile
                 subFile= "subtitles="+ temp2
                 captionedFile = temp2.replace(".srt","_Subtitled.mp4")
+                print(captionedFile)
                 subFile=subFile.replace(":/","\\\:\/")
                 subprocess.run(["ffmpeg", "-i", mp4file, "-vf", subFile,"-c:v","libx264","-preset","ultrafast", "-crf","22","-c:a","copy",captionedFile])
 
@@ -290,14 +292,16 @@ class VideoPlayer(QWidget):
         except FileNotFoundError:
             # Handle the case where ffmpeg or whisper is not found on the system.
             self.label.setText("ffmpeg or whisper not found. Please install ffmpeg and whisper and try again.")
-      
+     
         self.update_progress(100)  # Finalize the progress to indicate completion of the task.
 
     def transcribe_directory(self):
         # Opens a directory selection dialog and processes each suitable media file found.
         directory = QFileDialog.getExistingDirectory(self, "Select Directory for Transcription")
+        print(directory)
         if directory:
             for filename in os.listdir(directory):
+                print(filename)
                 if filename.endswith((".mp3", ".mp4", ".wav", ".mov")):
                     self.convert_and_transcribe(os.path.join(directory, filename))  
 
@@ -306,7 +310,7 @@ class VideoPlayer(QWidget):
     def parse_subtitles(self, filename):
         # Initialize a list to hold subtitle blocks and timestamps.
         subtitles = []
-        self.timeStamp = []  # List to hold timestamps 
+        self.timeStamp = []  # List to hold timestamps
         srtFile = filename.split('.')[0] + '.srt'  # Construct the SRT filename.
         if os.path.exists(srtFile):  # Check if the SRT file exists.
             with open(srtFile, 'r') as file:  # Open the SRT file.
@@ -438,7 +442,7 @@ class VideoPlayer(QWidget):
     def seek_video(self, position):
         # Seek the media player to a specific position in milliseconds.
         self.mediaPlayer.setPosition(position)
-    
+   
     def play_video(self):
         # Toggle play/pause based on the current state of the media player.
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -493,7 +497,7 @@ class VideoPlayer(QWidget):
                 results.append(result_text)  # Add the formatted text to results.
                 timestamps.append(subtitle[0])  # Add the start timestamp for navigation.
         return results, timestamps  # Return the lists of results and timestamps.
-    
+   
     def perform_search(self):
         # Initiates a search operation based on user input.
         if not self.subtitles:
@@ -513,7 +517,7 @@ class VideoPlayer(QWidget):
         dialog.timestampClicked.connect(self.handle_timestamp_click)  # Connect a signal to handle clicks on timestamps.
         dialog.exec_()  
 
-    '''Combo Box and UI Updates''' 
+    '''Combo Box and UI Updates'''
 
     def on_combobox_changed(self, index):
         # Handles actions based on the selected combobox option.
@@ -530,11 +534,11 @@ class VideoPlayer(QWidget):
     def update_progress(self, value):
         # Updates the progress bar to the specified value.
         self.progress.setValue(value)  # Set the progress bar's current value.
-        QApplication.processEvents()  # Ensure the UI updates to reflect the new progress bar value.       
+        QApplication.processEvents()  # Ensure the UI updates to reflect the new progress bar value.      
 
 class ResultsDialog(QDialog):
     #Define a signal for handling timestamp clicks
-    timestampClicked = pyqtSignal(int) 
+    timestampClicked = pyqtSignal(int)
 
     def __init__(self, results, timestamps, keyword, parent=None):
         super().__init__(parent)
@@ -547,7 +551,7 @@ class ResultsDialog(QDialog):
         # Initialize the QTextEdit to display results
         self.resultsTextBox = QTextEdit(self)
         self.resultsTextBox.setReadOnly(True)
-        
+       
         # Process results to highlight the keyword
         highlighted_text = self.highlight_keyword(results, keyword)
         self.resultsTextBox.setHtml(highlighted_text)  # Use setHtml to apply HTML formatting
@@ -572,20 +576,20 @@ class ResultsDialog(QDialog):
         reply = QMessageBox.question(self, "Continue Searching", "Do you want to search for more words?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             self.parent().perform_search()  # Calls perform_search of the parent
-        self.close() 
+        self.close()
 
     def highlight_keyword(self, results, keyword):
         #Highlight keyword in results
         highlighted_results = []
         # Preparing the regular expression for case-insensitive search
         keyword_regex = re.compile(re.escape(keyword), re.IGNORECASE)
-        
+       
         for result in results:
             # Highlight keyword in the result using HTML mark tag
             highlighted_result = keyword_regex.sub(lambda match: f"<mark style='background-color: yellow;'>{match.group(0)}</mark>", result)
             highlighted_results.append(highlighted_result)
-        
-        return "<br>".join(highlighted_results) 
+       
+        return "<br>".join(highlighted_results)
 
     def milliseconds_to_timestamp(self, ms):
         #Convert milliseconds to timestamp format
